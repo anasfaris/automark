@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Automark</string>
+    <string name="edit_message">Enter ID</string>
+    <string name="button_send">OK</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_scan">Scanning</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>
