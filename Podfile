@@ -1,0 +1,10 @@
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '8.0'
+
+pod 'AFNetworking', '~> 1.3'
+pod 'XMLDictionary', '~> 1.2'
+pod 'OCRSDKClient', '~> 0.2'
+pod 'RMMapper', '~> 1.1'
+pod 'NYXImagesKit', '~> 2.3'
+pod 'SACameraPickerViewController', '~> 0.1'
+pod 'CHCSVParser', '~> 2.1'

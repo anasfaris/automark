@@ -1,0 +1,30 @@
+PODS:
+  - AFNetworking (1.3.1)
+  - CHCSVParser (2.1.0)
+  - NYXImagesKit (2.3)
+  - OCRSDKClient (0.2.1):
+    - AFNetworking (= 1.3.1)
+    - XMLDictionary (= 1.2.2)
+  - RMMapper (1.1.5)
+  - SACameraPickerViewController (0.1.0)
+  - XMLDictionary (1.2.2)
+
+DEPENDENCIES:
+  - AFNetworking (~> 1.3)
+  - CHCSVParser (~> 2.1)
+  - NYXImagesKit (~> 2.3)
+  - OCRSDKClient (~> 0.2)
+  - RMMapper (~> 1.1)
+  - SACameraPickerViewController (~> 0.1)
+  - XMLDictionary (~> 1.2)
+
+SPEC CHECKSUMS:
+  AFNetworking: 5db28423ed062e2b15b97c731f06cfb6668e607a
+  CHCSVParser: 1ebc9783114707e2b6f83b20fe0f246eb2fabae0
+  NYXImagesKit: 1c9f228ae78fab475d267b3b3a1308e0fba11731
+  OCRSDKClient: a6259fd61d0155c9a7281837445103b0e0812673
+  RMMapper: a32a1cc09d9652a83965906197097d2256d229f6
+  SACameraPickerViewController: 373bac45da9fabf81bb9fc03c9521011624d9e18
+  XMLDictionary: f91fc96e7a43ea7e2bd9e76e532574066dc4eb1f
+
+COCOAPODS: 0.35.0
