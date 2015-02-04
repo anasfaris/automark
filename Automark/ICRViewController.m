@@ -78,6 +78,9 @@
     // Set the example UIImageView's image to the output UIImage.
     self.imageView.image = contrastedImage;
     
+    NSData *data = UIImageJPEGRepresentation(contrastedImage, 1.0);
+    NSLog(@"size = %lu", (unsigned long) data.length);
+    
     [(AppDelegate*)[[UIApplication sharedApplication] delegate] setImageToProcess:contrastedImage];
 }
 
