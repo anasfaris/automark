@@ -13,7 +13,10 @@
 @property (strong, nonatomic) IBOutlet UILabel *totalMarks;
 
 @property Result *results;
+@property Result *tests;
 @property (strong, nonatomic) IBOutlet UIButton *saveButton;
 @property (strong, nonatomic) IBOutlet UIButton *showXMLButton;
+
+@property (strong, nonatomic) NSMutableArray *rStudents;
 
 @end

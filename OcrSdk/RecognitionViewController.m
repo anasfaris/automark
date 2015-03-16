@@ -2,6 +2,7 @@
 #import "AppDelegate.h"
 #import "XMLDictionary.h"
 #import "ResultViewController.h"
+#import "NSUserDefaults+RMSaveCustomObject.h"
 
 // To create an application and obtain a password,
 // register at http://cloud.ocrsdk.com/Account/Register
@@ -18,6 +19,8 @@ static NSString* MyPassword = @"pIx+8CK/ce7yqSim3FINWu/h";
 @synthesize textView;
 @synthesize statusLabel;
 @synthesize statusIndicator;
+
+NSUserDefaults* defaults;
 
 - (void)didReceiveMemoryWarning
 {
@@ -55,6 +58,9 @@ static NSString* MyPassword = @"pIx+8CK/ce7yqSim3FINWu/h";
 
 - (void)viewDidAppear:(BOOL)animated
 {
+    // Declare local storage
+    defaults = [NSUserDefaults standardUserDefaults];
+    
 	statusLabel.text = @"Loading image...";
 	
 	UIImage* image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
@@ -75,11 +81,17 @@ static NSString* MyPassword = @"pIx+8CK/ce7yqSim3FINWu/h";
 	NSString* installationID = [[NSUserDefaults standardUserDefaults] stringForKey:@"installationID"];
 	
 	client.applicationID = [client.applicationID stringByAppendingString:installationID];
-	
-	[client processImage:image];
+    
+//	[client processImage:image];
+    for (int i = 1; i < 10; i++) {
+        NSString *strTest = [NSString stringWithFormat:@"test%d", i];
+//        NSLog(@"%@", strTest);
+    }
+    
+    [client processImage:[UIImage imageNamed:@"test1"]];
 	
 	statusLabel.text = @"Uploading image...";
-	
+    
     [super viewDidAppear:animated];
 }
 
@@ -141,7 +153,15 @@ static NSString* MyPassword = @"pIx+8CK/ce7yqSim3FINWu/h";
     self.results.studentID = sID;
     self.results.marks = totalString;
     
+    self.rStudents = [defaults rm_customObjectForKey:@"result_data"];
+    [self.rStudents addObject:self.results];
+    [defaults rm_setCustomObject:self.rStudents forKey:@"result_data"];
+    [defaults synchronize];
+    
     self.showXMLButton.hidden = NO;
+    
+    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:2];
+    [self.navigationController popToViewController:prevVC animated:YES];
     
 }
 
@@ -179,10 +199,10 @@ static NSString* MyPassword = @"pIx+8CK/ce7yqSim3FINWu/h";
         return;
     }
     
-    ResultViewController *resultViewController = segue.destinationViewController;
-    resultViewController.recognizedResult = self.results;
-    [resultViewController.students addObject:self.results];
-    NSLog(@"Save pressed in recognition");
+//    ResultViewController *resultViewController = segue.destinationViewController;
+//    resultViewController.recognizedResult = self.results;
+//    [resultViewController.students addObject:self.results];
+//    NSLog(@"Save pressed in recognition");
 }
 
 @end

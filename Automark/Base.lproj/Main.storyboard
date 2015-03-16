@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6254" systemVersion="14C81f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="I4E-bD-wBV">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="I4E-bD-wBV">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -123,7 +124,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Title" id="cSB-8l-ySP">
-                        <barButtonItem key="rightBarButtonItem" systemItem="organize" id="y0X-CL-DNF">
+                        <barButtonItem key="rightBarButtonItem" systemItem="camera" id="y0X-CL-DNF">
                             <connections>
                                 <segue destination="NQf-De-6UZ" kind="push" id="5m9-57-6tS"/>
                             </connections>
@@ -158,15 +159,12 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <segue destination="EG8-ce-Gtx" kind="push" id="17l-G4-Drb"/>
+                                    <segue destination="EG8-ce-Gtx" kind="push" identifier="rSegue" id="17l-G4-Drb"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="detailDisclosure" lineBreakMode="middleTruncation" id="B1z-xD-4wv">
                                 <rect key="frame" x="16" y="541" width="22" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <connections>
-                                    <segue destination="hAf-4i-8B2" kind="unwind" unwindAction="unwindToList:" id="XwH-un-m9E"/>
-                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" id="5WK-zC-kjU">
                                 <rect key="frame" x="282" y="541" width="22" height="22"/>
@@ -190,11 +188,9 @@
                     </navigationItem>
                     <connections>
                         <outlet property="imageView" destination="Tdd-To-UJH" id="Ftg-Ov-9E7"/>
-                        <outlet property="saveButton" destination="B1z-xD-4wv" id="DY1-bu-hKB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gLZ-3h-ank" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="hAf-4i-8B2" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1559" y="406"/>
         </scene>

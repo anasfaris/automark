@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "UIImage+Filtering.h"
 #import "UIImage+Resizing.h"
+#import "RecognitionViewController.h"
 
 @interface ICRViewController ()
 
@@ -32,8 +33,15 @@
 - (void)viewDidLoad
 {
     self.imageView.image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
+    
     [super viewDidLoad];
     
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
 }
 
 - (void)viewDidUnload
@@ -60,11 +68,17 @@
     
     // Optionally Set the Image Size
     self.cameraPicker.previewSize = CGSizeMake(320, 30);
-
     
     // Present the SACameraPickerViewController's View.
      [self presentViewController:self.cameraPicker animated:YES completion:nil];
     
+}
+
+// Optional - Called when the SACameraPickerViewController is Cancelled.
+- (void)cameraPickerViewControllerDidCancel:(SACameraPickerViewController *)cameraPicker
+{
+    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
+    [self.navigationController popToViewController:prevVC animated:YES];
 }
 
 // Required - The return info from the SACameraPickerViewController.
@@ -82,26 +96,29 @@
     NSLog(@"size = %lu", (unsigned long) data.length);
     
     [(AppDelegate*)[[UIApplication sharedApplication] delegate] setImageToProcess:contrastedImage];
+
+    
+    [self performSegueWithIdentifier:@"rSegue" sender:self];
 }
 
-- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
-    UIImage *image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
-    UIImage *contrastedImage = [image contrastAdjustmentWithValue:200.0];
-    
-    NSLog(@"h: %f",image.size.height);
-    NSLog(@"w: %f",image.size.width);
-    
-    UIImage *cropped = [self squareImageWithImage:contrastedImage scaledToSize:(CGSize){320,30}];
-    
-    NSLog(@"h: %f",cropped.size.height);
-    NSLog(@"w: %f",cropped.size.width);
-    
-    [picker dismissModalViewControllerAnimated:YES];
-    
-    self.imageView.image = cropped;
-    [(AppDelegate*)[[UIApplication sharedApplication] delegate] setImageToProcess:cropped];
-}
+//- (void) imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+//{
+//    UIImage *image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+//    UIImage *contrastedImage = [image contrastAdjustmentWithValue:200.0];
+//    
+//    NSLog(@"h: %f",image.size.height);
+//    NSLog(@"w: %f",image.size.width);
+//    
+//    UIImage *cropped = [self squareImageWithImage:contrastedImage scaledToSize:(CGSize){320,30}];
+//    
+//    NSLog(@"h: %f",cropped.size.height);
+//    NSLog(@"w: %f",cropped.size.width);
+//    
+//    [picker dismissModalViewControllerAnimated:YES];
+//    
+//    self.imageView.image = cropped;
+//    [(AppDelegate*)[[UIApplication sharedApplication] delegate] setImageToProcess:cropped];
+//}
 
 - (UIImage *)squareImageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
     double ratio;

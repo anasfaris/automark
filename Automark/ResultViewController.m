@@ -32,6 +32,10 @@ NSUserDefaults* defaults;
                                                             NSFontAttributeName: [UIFont fontWithName:@"HelveticaNeue-Thin" size:22.0f],
                                                             }];
     
+}
+
+-(void)viewDidAppear:(BOOL)animated {
+    
     defaults = [NSUserDefaults standardUserDefaults];
     self.students = [defaults rm_customObjectForKey:@"result_data"];
     
@@ -48,6 +52,8 @@ NSUserDefaults* defaults;
         [defaults rm_setCustomObject:self.students forKey:@"result_data"];
         [defaults synchronize];
     }
+    
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
