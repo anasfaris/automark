@@ -7,13 +7,14 @@
 
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 
-@property (weak, nonatomic) IBOutlet UILabel *statusLabel;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *statusIndicator;
+@property (strong, nonatomic) IBOutlet UILabel *errorMessageLabel;
 
-@property (strong, nonatomic) IBOutlet UILabel *studentID;
-@property (strong, nonatomic) IBOutlet UILabel *totalMarks;
+@property (strong, nonatomic) IBOutlet UILabel *studentIDLabel;
+@property (strong, nonatomic) IBOutlet UILabel *marksLabel;
 @property (strong, nonatomic) IBOutlet UITextField *studentIDField;
 @property (strong, nonatomic) IBOutlet UITextField *marksField;
+@property (strong, nonatomic) IBOutlet UIImageView *errorImageView;
 
 @property Result *results;
 @property Result *tests;

@@ -20,7 +20,6 @@ static NSString* MyPassword = @"pIx+8CK/ce7yqSim3FINWu/h";
 @implementation RecognitionViewController
 
 @synthesize textView;
-@synthesize statusLabel;
 @synthesize statusIndicator;
 
 NSUserDefaults* defaults;
@@ -49,6 +48,14 @@ int data_error;
     
     self.studentIDField.delegate = self;
     self.marksField.delegate = self;
+    
+    self.studentIDLabel.hidden = YES;
+    self.marksLabel.hidden = YES;
+    self.errorImageView.hidden = YES;
+    self.studentIDField.hidden = YES;
+    self.marksField.hidden = YES;
+    self.saveButton.hidden = YES;
+    self.errorMessageLabel.hidden = YES;
 
 	// Do any additional setup after loading the view, typically from a nib.
 }
@@ -56,8 +63,8 @@ int data_error;
 - (void)viewDidUnload
 {
 	[self setTextView:nil];
-	[self setStatusLabel:nil];
 	[self setStatusIndicator:nil];
+    
     [super viewDidUnload];
     // Release any retained subviews of the main view.
     // e.g. self.myOutlet = nil;
@@ -67,8 +74,8 @@ int data_error;
 {
 	textView.hidden = YES;
 	
-	statusLabel.hidden = NO;
-	statusIndicator. hidden = NO;
+	statusIndicator.hidden = YES;
+
 	
     [super viewWillAppear:animated];
 }
@@ -78,7 +85,6 @@ int data_error;
     // Declare local storage
     defaults = [NSUserDefaults standardUserDefaults];
     self.showXMLButton.hidden = NO;
-	statusLabel.text = @"Loading image...";
 	
 	client = [[Client alloc] initWithApplicationID:MyApplicationID password:MyPassword];
 	[client setDelegate:self];
@@ -100,10 +106,6 @@ int data_error;
     if (!data_error)
         [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
     data_error = 0;
-//    [client processImage:image];
-	
-	statusLabel.text = @"Uploading image...";
-
     
     [super viewDidAppear:animated];
 }
@@ -132,9 +134,8 @@ int data_error;
 // Optional - Called when the SACameraPickerViewController is Cancelled.
 - (void)cameraPickerViewControllerDidCancel:(SACameraPickerViewController *)cameraPicker
 {
-    data_error = 1;
-//    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
-//    [self.navigationController popToViewController:prevVC animated:YES];
+    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
+    [self.navigationController popToViewController:prevVC animated:YES];
 }
 
 // Required - The return info from the SACameraPickerViewController.
@@ -142,17 +143,11 @@ int data_error;
 {
     // Fetch the UIImage from the info dictionary
     UIImage *image = [info objectForKey:SACameraPickerViewControllerImageKey];
-    
     UIImage *contrastedImage = [image contrastAdjustmentWithValue:200.0];
-    
-    // Set the example UIImageView's image to the output UIImage.
-//    imageView.image = contrastedImage;
-    
     NSData *data = UIImageJPEGRepresentation(contrastedImage, 1.0);
     NSLog(@"size = %lu", (unsigned long) data.length);
     
-//    [(AppDelegate*)[[UIApplication sharedApplication] delegate] setImageToProcess:contrastedImage];
-//    UIImage* image2 = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
+    self.errorImageView.image = contrastedImage;
     [client processImage:contrastedImage];
     
 }
@@ -166,17 +161,16 @@ int data_error;
 
 - (void)clientDidFinishUpload:(Client *)sender
 {
-	statusLabel.text = @"Processing image...";
+
 }
 
 - (void)clientDidFinishProcessing:(Client *)sender
 {
-	statusLabel.text = @"Downloading result...";
+
 }
 
 - (void)client:(Client *)sender didFinishDownloadData:(NSData *)downloadedData
 {
-	statusLabel.hidden = YES;
 	statusIndicator.hidden = YES;
 	
 	NSString* result = [[NSString alloc] initWithData:downloadedData encoding:NSUTF8StringEncoding];
@@ -205,41 +199,54 @@ int data_error;
     }
     
 	textView.text = result;
-    
-    self.studentID.text = sID;
-
     NSString *totalString = [NSString stringWithFormat:@"%.1lf", sum];
-    self.totalMarks.text = totalString;
 
     self.results = [[Result alloc] init];
     self.results.studentID = sID;
     self.results.marks = totalString;
+    
+    if ([sID  isEqual: @"1000000000"]) {
+        data_error = 1;
+        
+        self.studentIDLabel.hidden = NO;
+        self.marksLabel.hidden = NO;
+        self.errorImageView.hidden = NO;
+        self.studentIDField.hidden = NO;
+        self.marksField.hidden = NO;
+        self.saveButton.hidden = NO;
+        self.errorMessageLabel.hidden = NO;
+        [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
+    }
+    
+    self.studentIDField.text = sID;
+    self.marksField.text = totalString;
+
+    
+    if (!data_error) {
+        self.rStudents = [defaults rm_customObjectForKey:@"result_data"];
+        [self.rStudents addObject:self.results];
+        [defaults rm_setCustomObject:self.rStudents forKey:@"result_data"];
+        [defaults synchronize];
+    }
+    
+    self.showXMLButton.hidden = NO;
+}
+
+- (IBAction)showXmlClicked:(id)sender {
+    textView.hidden = NO;
+}
+
+- (IBAction)saveButtonClicked:(id)sender {
+    self.results.studentID = self.studentIDField.text;
+    self.results.marks = self.marksField.text;
     
     self.rStudents = [defaults rm_customObjectForKey:@"result_data"];
     [self.rStudents addObject:self.results];
     [defaults rm_setCustomObject:self.rStudents forKey:@"result_data"];
     [defaults synchronize];
     
-    self.showXMLButton.hidden = NO;
-    
-//    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:2];
-//    [self.navigationController popToViewController:prevVC animated:YES];
-    
-}
-- (IBAction)takePictureButton:(id)sender {
-    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
-}
-
-- (IBAction)showXmlClicked:(id)sender {
-    UIImage* image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
-    [client processImage:image];
-    textView.hidden = YES;
-}
-
-- (IBAction)saveButtonClicked:(id)sender {
-    
-//    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
-//    [self.navigationController popToViewController:prevVC animated:YES];
+    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
+    [self.navigationController popToViewController:prevVC animated:NO];
 }
 
 - (void)client:(Client *)sender didFailedWithError:(NSError *)error
@@ -252,7 +259,6 @@ int data_error;
 	
 	[alert show];
 	
-	statusLabel.text = [error localizedDescription];
 	statusIndicator.hidden = YES;
 }
 
@@ -266,10 +272,6 @@ int data_error;
         return;
     }
 
-//    ResultViewController *resultViewController = segue.destinationViewController;
-//    resultViewController.recognizedResult = self.results;
-//    [resultViewController.students addObject:self.results];
-//    NSLog(@"Save pressed in recognition");
 }
 
 @end
