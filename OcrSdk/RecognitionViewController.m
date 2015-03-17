@@ -212,7 +212,8 @@ int yes_both;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-	return NO;
+    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+//	return NO;
 }
 
 #pragma mark - ClientDelegate implementation
