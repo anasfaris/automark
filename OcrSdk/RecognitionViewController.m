@@ -40,7 +40,7 @@ UIImageView *imageView;
     [super viewDidLoad];
     
     imageView.image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
-    
+    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -71,8 +71,6 @@ UIImageView *imageView;
     self.showXMLButton.hidden = NO;
 	statusLabel.text = @"Loading image...";
 	
-//	UIImage* image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
-	
 	client = [[Client alloc] initWithApplicationID:MyApplicationID password:MyPassword];
 	[client setDelegate:self];
 	
@@ -90,9 +88,12 @@ UIImageView *imageView;
 	
 	client.applicationID = [client.applicationID stringByAppendingString:installationID];
     
+    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
+    
 //    [client processImage:image];
 	
 	statusLabel.text = @"Uploading image...";
+
     
     [super viewDidAppear:animated];
 }
@@ -129,12 +130,14 @@ UIImageView *imageView;
     UIImage *contrastedImage = [image contrastAdjustmentWithValue:200.0];
     
     // Set the example UIImageView's image to the output UIImage.
-    imageView.image = contrastedImage;
+//    imageView.image = contrastedImage;
     
     NSData *data = UIImageJPEGRepresentation(contrastedImage, 1.0);
     NSLog(@"size = %lu", (unsigned long) data.length);
     
-    [(AppDelegate*)[[UIApplication sharedApplication] delegate] setImageToProcess:contrastedImage];
+//    [(AppDelegate*)[[UIApplication sharedApplication] delegate] setImageToProcess:contrastedImage];
+//    UIImage* image2 = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
+    [client processImage:contrastedImage];
     
 }
 

@@ -77,6 +77,11 @@
 // Optional - Called when the SACameraPickerViewController is Cancelled.
 - (void)cameraPickerViewControllerDidCancel:(SACameraPickerViewController *)cameraPicker
 {
+    [self performSelector:@selector(goToMain:) withObject:self afterDelay:0.5];
+}
+
+- (void)goToMain:(id)sender
+{
     UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
     [self.navigationController popToViewController:prevVC animated:YES];
 }
