@@ -189,11 +189,15 @@ int data_error;
     NSString *sID = @"1000000000";
     double sum = 0.0;
     
+    NSString *guess = @"1000000000";
+    
     for (id tempObject in listItems) {
         if ([tempObject length] == 1) {
             sum += [tempObject doubleValue];
         } else if ([tempObject length] == 10) {
             sID = tempObject;
+        } else if ([tempObject length] > 2) {
+            guess = tempObject;
         }
         NSLog(@"%@", tempObject);
     }
@@ -218,7 +222,7 @@ int data_error;
         [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
     }
     
-    self.studentIDField.text = sID;
+    self.studentIDField.text = guess;
     self.marksField.text = totalString;
 
     
@@ -246,7 +250,7 @@ int data_error;
     [defaults synchronize];
     
     UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
-    [self.navigationController popToViewController:prevVC animated:NO];
+    [self.navigationController popToViewController:prevVC animated:YES];
 }
 
 - (void)client:(Client *)sender didFailedWithError:(NSError *)error
