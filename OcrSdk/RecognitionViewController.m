@@ -192,7 +192,7 @@ int data_error;
     NSString *guess = @"1000000000";
     
     for (id tempObject in listItems) {
-        if ([tempObject length] == 1) {
+        if ([tempObject length] == 2) {
             sum += [tempObject doubleValue];
         } else if ([tempObject length] == 10) {
             sID = tempObject;

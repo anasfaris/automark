@@ -72,7 +72,7 @@
 {		
 	NSParameterAssert(image);
 	
-    NSString *parameters = @"language=Digits&textType=handprinted&markingType=partitionedFrame&placeholdersCount=18&letterSet=0123456789-";
+    NSString *parameters = @"language=Digits&textType=handprinted&markingType=partitionedFrame&placeholdersCount=22&letterSet=0123456789-";
     
 	NSURL* processingURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://cloud.ocrsdk.com/processTextField?%@", parameters]];
 	
