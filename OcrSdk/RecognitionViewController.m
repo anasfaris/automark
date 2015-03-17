@@ -147,6 +147,7 @@ int yes_both;
 // Optional - Called when the SACameraPickerViewController is Cancelled.
 - (void)cameraPickerViewControllerDidCancel:(SACameraPickerViewController *)cameraPicker
 {
+    [NSThread sleepForTimeInterval:1.00];
     UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
     [self.navigationController popToViewController:prevVC animated:YES];
 }
@@ -268,7 +269,7 @@ int yes_both;
             self.studentIDField.text = guess;
         }
         
-    } else {
+    } else if (listItems.count <= 4) {
         double sum = 0.0;
         
         for (id tempObject in listItems) {
@@ -286,6 +287,8 @@ int yes_both;
             self.results.marks = totalString;
         }
         self.marksField.text = totalString;
+    } else {
+        data_error = 1;
     }
     
     if (data_error) {
