@@ -1,8 +1,9 @@
 #import <UIKit/UIKit.h>
 #import "Client.h"
 #import "Result.h"
+#import "SACameraPickerViewController.h"
 
-@interface RecognitionViewController : UIViewController<ClientDelegate>
+@interface RecognitionViewController : UIViewController<ClientDelegate, SACameraPickerViewControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 
@@ -18,5 +19,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *showXMLButton;
 
 @property (strong, nonatomic) NSMutableArray *rStudents;
+
+@property (nonatomic, strong) SACameraPickerViewController *cameraPicker;
 
 @end

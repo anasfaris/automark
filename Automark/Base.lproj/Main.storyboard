@@ -126,7 +126,7 @@
                     <navigationItem key="navigationItem" title="Title" id="cSB-8l-ySP">
                         <barButtonItem key="rightBarButtonItem" systemItem="camera" id="y0X-CL-DNF">
                             <connections>
-                                <segue destination="NQf-De-6UZ" kind="push" id="5m9-57-6tS"/>
+                                <segue destination="EG8-ce-Gtx" kind="push" id="4CP-7A-GJA"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -229,17 +229,6 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="2QC-VP-2Jv">
-                                <rect key="frame" x="16" y="523" width="288" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Show XML">
-                                    <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="showXmlClicked:" destination="EG8-ce-Gtx" eventType="touchUpInside" id="2NO-Lh-H3m"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Student ID:" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="JyM-vX-8Eh">
                                 <rect key="frame" x="46" y="87" width="84" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -280,14 +269,27 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Processing Image..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hDV-kf-MFQ">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="r6L-KA-8bw">
+                                <rect key="frame" x="104" y="439" width="87" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.94821648849999995" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                                <state key="normal" title="Take picture!">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="takePictureButton:" destination="EG8-ce-Gtx" eventType="touchUpInside" id="Dg3-RK-uLo"/>
+                                </connections>
+                            </button>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="2QC-VP-2Jv">
+                                <rect key="frame" x="16" y="504" width="288" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Show XML">
+                                    <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="showXmlClicked:" destination="EG8-ce-Gtx" eventType="touchUpInside" id="2NO-Lh-H3m"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -334,6 +336,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="4CP-7A-GJA"/>
         <segue reference="Txo-iQ-3le"/>
     </inferredMetricsTieBreakers>
 </document>

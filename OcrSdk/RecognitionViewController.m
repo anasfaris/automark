@@ -4,6 +4,9 @@
 #import "ResultViewController.h"
 #import "NSUserDefaults+RMSaveCustomObject.h"
 
+#import "UIImage+Filtering.h"
+#import "UIImage+Resizing.h"
+
 // To create an application and obtain a password,
 // register at http://cloud.ocrsdk.com/Account/Register
 // More info on getting your application id and password at
@@ -21,6 +24,8 @@ static NSString* MyPassword = @"pIx+8CK/ce7yqSim3FINWu/h";
 @synthesize statusIndicator;
 
 NSUserDefaults* defaults;
+Client *client;
+UIImageView *imageView;
 
 - (void)didReceiveMemoryWarning
 {
@@ -33,6 +38,9 @@ NSUserDefaults* defaults;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    imageView.image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
+    
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -60,12 +68,12 @@ NSUserDefaults* defaults;
 {
     // Declare local storage
     defaults = [NSUserDefaults standardUserDefaults];
-    
+    self.showXMLButton.hidden = NO;
 	statusLabel.text = @"Loading image...";
 	
-	UIImage* image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
+//	UIImage* image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
 	
-	Client *client = [[Client alloc] initWithApplicationID:MyApplicationID password:MyPassword];
+	client = [[Client alloc] initWithApplicationID:MyApplicationID password:MyPassword];
 	[client setDelegate:self];
 	
 	if([[NSUserDefaults standardUserDefaults] stringForKey:@"installationID"] == nil) {
@@ -82,17 +90,52 @@ NSUserDefaults* defaults;
 	
 	client.applicationID = [client.applicationID stringByAppendingString:installationID];
     
-//	[client processImage:image];
-    for (int i = 1; i < 10; i++) {
-        NSString *strTest = [NSString stringWithFormat:@"test%d", i];
-//        NSLog(@"%@", strTest);
-    }
-    
-    [client processImage:[UIImage imageNamed:@"test1"]];
+//    [client processImage:image];
 	
 	statusLabel.text = @"Uploading image...";
     
     [super viewDidAppear:animated];
+}
+
+- (void)takePhoto:(id)sender
+{
+    
+    self.cameraPicker = [[SACameraPickerViewController alloc] initWithCameraPickerViewControllerMode:SACameraPickerViewControllerModeNormal];
+    
+    // Set the SACameraPickerViewController's Delegate
+    self.cameraPicker.delegate = self;
+    
+    // Optionally Set the Image Size
+    self.cameraPicker.previewSize = CGSizeMake(320, 30);
+    
+    // Present the SACameraPickerViewController's View.
+    [self presentViewController:self.cameraPicker animated:YES completion:nil];
+    
+}
+
+// Optional - Called when the SACameraPickerViewController is Cancelled.
+- (void)cameraPickerViewControllerDidCancel:(SACameraPickerViewController *)cameraPicker
+{
+    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
+    [self.navigationController popToViewController:prevVC animated:YES];
+}
+
+// Required - The return info from the SACameraPickerViewController.
+- (void)cameraPickerViewController:(SACameraPickerViewController *)cameraPicker didTakeImageWithInfo:(NSDictionary *)info
+{
+    // Fetch the UIImage from the info dictionary
+    UIImage *image = [info objectForKey:SACameraPickerViewControllerImageKey];
+    
+    UIImage *contrastedImage = [image contrastAdjustmentWithValue:200.0];
+    
+    // Set the example UIImageView's image to the output UIImage.
+    imageView.image = contrastedImage;
+    
+    NSData *data = UIImageJPEGRepresentation(contrastedImage, 1.0);
+    NSLog(@"size = %lu", (unsigned long) data.length);
+    
+    [(AppDelegate*)[[UIApplication sharedApplication] delegate] setImageToProcess:contrastedImage];
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -160,13 +203,18 @@ NSUserDefaults* defaults;
     
     self.showXMLButton.hidden = NO;
     
-    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:2];
-    [self.navigationController popToViewController:prevVC animated:YES];
+//    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:2];
+//    [self.navigationController popToViewController:prevVC animated:YES];
     
+}
+- (IBAction)takePictureButton:(id)sender {
+    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
 }
 
 - (IBAction)showXmlClicked:(id)sender {
-    textView.hidden = NO;
+    UIImage* image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
+    [client processImage:image];
+    textView.hidden = YES;
 }
 
 - (IBAction)saveButtonClicked:(id)sender {
