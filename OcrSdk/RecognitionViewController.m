@@ -26,6 +26,7 @@ static NSString* MyPassword = @"pIx+8CK/ce7yqSim3FINWu/h";
 NSUserDefaults* defaults;
 Client *client;
 UIImageView *imageView;
+int data_error;
 
 - (void)didReceiveMemoryWarning
 {
@@ -39,8 +40,16 @@ UIImageView *imageView;
 {
     [super viewDidLoad];
     
-    imageView.image = [(AppDelegate*)[[UIApplication sharedApplication] delegate] imageToProcess];
-    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
+    //Add tap to dismiss keyboard
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]
+                                   initWithTarget:self
+                                   action:@selector(dismissKeyboard)];
+    
+    [self.view addGestureRecognizer:tap];
+    
+    self.studentIDField.delegate = self;
+    self.marksField.delegate = self;
+
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -88,14 +97,20 @@ UIImageView *imageView;
 	
 	client.applicationID = [client.applicationID stringByAppendingString:installationID];
     
-    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
-    
+    if (!data_error)
+        [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
+    data_error = 0;
 //    [client processImage:image];
 	
 	statusLabel.text = @"Uploading image...";
 
     
     [super viewDidAppear:animated];
+}
+
+-(void)dismissKeyboard {
+    [self.studentIDField resignFirstResponder];
+    [self.marksField resignFirstResponder];
 }
 
 - (void)takePhoto:(id)sender
@@ -117,8 +132,9 @@ UIImageView *imageView;
 // Optional - Called when the SACameraPickerViewController is Cancelled.
 - (void)cameraPickerViewControllerDidCancel:(SACameraPickerViewController *)cameraPicker
 {
-    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
-    [self.navigationController popToViewController:prevVC animated:YES];
+    data_error = 1;
+//    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
+//    [self.navigationController popToViewController:prevVC animated:YES];
 }
 
 // Required - The return info from the SACameraPickerViewController.
@@ -249,7 +265,7 @@ UIImageView *imageView;
         NSLog(@"Other pressed");
         return;
     }
-    
+
 //    ResultViewController *resultViewController = segue.destinationViewController;
 //    resultViewController.recognizedResult = self.results;
 //    [resultViewController.students addObject:self.results];

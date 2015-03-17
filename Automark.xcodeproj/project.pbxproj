@@ -174,8 +174,6 @@
 				EE407F4C1A62412B004E8566 /* ViewController.m */,
 				EE407F6A1A624494004E8566 /* ResultViewController.h */,
 				EE407F6B1A624494004E8566 /* ResultViewController.m */,
-				EE407F731A6263A0004E8566 /* ICRViewController.h */,
-				EE407F741A6263A0004E8566 /* ICRViewController.m */,
 				EEF9473B1A62FED40069D268 /* RecognitionViewController.h */,
 				EEF9473C1A62FED40069D268 /* RecognitionViewController.m */,
 				EE407F4E1A62412B004E8566 /* Main.storyboard */,
@@ -196,6 +194,8 @@
 				EEF9473A1A62FED40069D268 /* ProcessingOperation.m */,
 				EEF9473D1A62FED40069D268 /* Task.h */,
 				EEF9473E1A62FED40069D268 /* Task.m */,
+				EE407F731A6263A0004E8566 /* ICRViewController.h */,
+				EE407F741A6263A0004E8566 /* ICRViewController.m */,
 			);
 			path = Automark;
 			sourceTree = "<group>";

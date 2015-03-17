@@ -211,10 +211,10 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Loading image..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6NG-lT-Crw">
-                                <rect key="frame" x="16" y="527" width="288" height="21"/>
+                                <rect key="frame" x="16" y="541" width="288" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="gray" id="nBg-B8-EE9">
@@ -280,7 +280,7 @@
                                 </connections>
                             </button>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="2QC-VP-2Jv">
-                                <rect key="frame" x="16" y="504" width="288" height="30"/>
+                                <rect key="frame" x="16" y="489" width="288" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Show XML">
                                     <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -290,16 +290,30 @@
                                     <action selector="showXmlClicked:" destination="EG8-ce-Gtx" eventType="touchUpInside" id="2NO-Lh-H3m"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="fQc-ld-ynj">
+                                <rect key="frame" x="40" y="138" width="97" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" id="q61-AJ-Q7C">
+                                <rect key="frame" x="22" y="60" width="139" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="OCR" id="aD4-3d-JpD"/>
                     <connections>
+                        <outlet property="marksField" destination="fQc-ld-ynj" id="kJb-O4-B6R"/>
                         <outlet property="saveButton" destination="7a3-RD-aNM" id="PnZ-CL-iJe"/>
                         <outlet property="showXMLButton" destination="2QC-VP-2Jv" id="2Zr-OG-08i"/>
                         <outlet property="statusIndicator" destination="nBg-B8-EE9" id="MB8-gm-OJC"/>
                         <outlet property="statusLabel" destination="6NG-lT-Crw" id="z1A-yZ-Irh"/>
                         <outlet property="studentID" destination="8Pu-TC-MoM" id="n8i-aA-6qb"/>
+                        <outlet property="studentIDField" destination="q61-AJ-Q7C" id="85Z-wQ-eic"/>
                         <outlet property="textView" destination="7Ih-00-kWO" id="d2Q-Vs-zmH"/>
                         <outlet property="totalMarks" destination="co5-5N-Nw4" id="IK6-Rh-Tc6"/>
                     </connections>
@@ -336,7 +350,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
+        <segue reference="pLg-1Q-5Co"/>
         <segue reference="4CP-7A-GJA"/>
-        <segue reference="Txo-iQ-3le"/>
     </inferredMetricsTieBreakers>
 </document>

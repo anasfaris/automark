@@ -3,7 +3,7 @@
 #import "Result.h"
 #import "SACameraPickerViewController.h"
 
-@interface RecognitionViewController : UIViewController<ClientDelegate, SACameraPickerViewControllerDelegate>
+@interface RecognitionViewController : UIViewController<ClientDelegate, SACameraPickerViewControllerDelegate, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 
@@ -12,6 +12,8 @@
 
 @property (strong, nonatomic) IBOutlet UILabel *studentID;
 @property (strong, nonatomic) IBOutlet UILabel *totalMarks;
+@property (strong, nonatomic) IBOutlet UITextField *studentIDField;
+@property (strong, nonatomic) IBOutlet UITextField *marksField;
 
 @property Result *results;
 @property Result *tests;
