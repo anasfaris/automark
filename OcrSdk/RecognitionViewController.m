@@ -6,6 +6,7 @@
 
 #import "UIImage+Filtering.h"
 #import "UIImage+Resizing.h"
+#import "UIImage+ResizeNCrop.h"
 
 // To create an application and obtain a password,
 // register at http://cloud.ocrsdk.com/Account/Register
@@ -26,6 +27,10 @@ NSUserDefaults* defaults;
 Client *client;
 UIImageView *imageView;
 int data_error;
+int pause_lock;
+int yes_sid;
+int yes_mark;
+int yes_both;
 
 - (void)didReceiveMemoryWarning
 {
@@ -56,6 +61,11 @@ int data_error;
     self.marksField.hidden = YES;
     self.saveButton.hidden = YES;
     self.errorMessageLabel.hidden = YES;
+    
+    pause_lock = 1;
+    yes_mark = 0;
+    yes_sid = 0;
+    yes_both = 0;
 
 	// Do any additional setup after loading the view, typically from a nib.
 }
@@ -123,8 +133,11 @@ int data_error;
     // Set the SACameraPickerViewController's Delegate
     self.cameraPicker.delegate = self;
     
-    // Optionally Set the Image Size
-    self.cameraPicker.previewSize = CGSizeMake(320, 30);
+    // ONE LINE
+//    self.cameraPicker.previewSize = CGSizeMake(320, 30);
+    
+    // TWO LINES
+    self.cameraPicker.previewSize = CGSizeMake(280, 250);
     
     // Present the SACameraPickerViewController's View.
     [self presentViewController:self.cameraPicker animated:YES completion:nil];
@@ -143,12 +156,56 @@ int data_error;
 {
     // Fetch the UIImage from the info dictionary
     UIImage *image = [info objectForKey:SACameraPickerViewControllerImageKey];
-    UIImage *contrastedImage = [image contrastAdjustmentWithValue:200.0];
-    NSData *data = UIImageJPEGRepresentation(contrastedImage, 1.0);
-    NSLog(@"size = %lu", (unsigned long) data.length);
     
-    self.errorImageView.image = contrastedImage;
-    [client processImage:contrastedImage];
+    // FOR TWO LINES
+    UIImage *image1 = [image cropInRect:CGRectMake(0, 255, 1064, 150)]; // student number image
+    UIImage *image2 = [image cropInRect:CGRectMake(0, 780, 1064, 150)]; // marks image
+    
+    image = [self mergeImage:image1 withImage:image2];
+    UIImage *contrastedImage1 = [image1 contrastAdjustmentWithValue:200.0];
+    UIImage *contrastedImage2 = [image2 contrastAdjustmentWithValue:200.0];
+    image = [self mergeImage:contrastedImage1 withImage:contrastedImage2];
+//    NSData *data = UIImageJPEGRepresentation(contrastedImage, 1.0);
+//    NSLog(@"size = %lu", (unsigned long) data.length);
+    
+    self.errorImageView.image = image;
+    [client processImage:contrastedImage1];
+//    [NSThread sleepForTimeInterval:0.06];
+    [client processImage:contrastedImage2];
+    
+}
+
+// Function to merge to images together
+- (UIImage*)mergeImage:(UIImage*)first withImage:(UIImage*)second
+{
+    // get size of the first image
+    CGImageRef firstImageRef = first.CGImage;
+    CGFloat firstWidth = CGImageGetWidth(firstImageRef);
+    CGFloat firstHeight = CGImageGetHeight(firstImageRef);
+    
+    // get size of the second image
+    CGImageRef secondImageRef = second.CGImage;
+    CGFloat secondWidth = CGImageGetWidth(secondImageRef);
+    CGFloat secondHeight = CGImageGetHeight(secondImageRef);
+    
+    // build merged size
+    CGSize mergedSize = CGSizeMake((firstWidth+secondWidth), MAX(firstHeight, secondHeight));
+    
+    // capture image context ref
+    UIGraphicsBeginImageContext(mergedSize);
+    
+    //Draw images onto the context
+    [first drawInRect:CGRectMake(0, 0, firstWidth, firstHeight)];
+    //[second drawInRect:CGRectMake(firstWidth, 0, secondWidth, secondHeight)];
+    [second drawInRect:CGRectMake(firstWidth-40, 0, secondWidth, secondHeight) blendMode:kCGBlendModeNormal alpha:1.0]; // merge addons
+    
+    // assign context to new UIImage
+    UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+    
+    // end context
+    UIGraphicsEndImageContext();
+    
+    return newImage;
     
 }
 
@@ -171,47 +228,67 @@ int data_error;
 
 - (void)client:(Client *)sender didFinishDownloadData:(NSData *)downloadedData
 {
-	statusIndicator.hidden = YES;
-	
-	NSString* result = [[NSString alloc] initWithData:downloadedData encoding:NSUTF8StringEncoding];
+    statusIndicator.hidden = YES;
+    
+    NSString* result = [[NSString alloc] initWithData:downloadedData encoding:NSUTF8StringEncoding];
     
     //Add some parsing here
     NSDictionary *xmlDoc = [NSDictionary dictionaryWithXMLString:result];
     
     NSString *value = [xmlDoc valueForKeyPath:@"field.value.__text"];
     NSLog(@"value: %@", value);
-	
+    
+    
     NSArray *listItems = [value componentsSeparatedByString:@"-"];
     NSLog(@"listItems: %@", listItems);
     
+    
     NSLog(@"%lu", (unsigned long)listItems.count);
     
-    NSString *sID = @"1000000000";
-    double sum = 0.0;
     
-    NSString *guess = @"1000000000";
+    NSLog(@"yes_sid_before: %d", yes_sid);
+    NSLog(@"yes_mark_before: %d", yes_mark);
     
-    for (id tempObject in listItems) {
-        if ([tempObject length] == 2) {
-            sum += [tempObject doubleValue];
-        } else if ([tempObject length] == 10) {
-            sID = tempObject;
-        } else if ([tempObject length] > 2) {
-            guess = tempObject;
+    if (listItems.count <= 2) {
+        NSString *sID = @"1000000000";
+        NSString *guess = @"1000000000";
+        if ([listItems[0] length] == 10)
+            sID = listItems[0];
+        else
+            guess = listItems[0];
+        yes_sid = 1;
+        if (yes_mark)
+            self.results.studentID = sID;
+        else {
+            self.results = [[Result alloc] init];
+            self.results.studentID = sID;
         }
-        NSLog(@"%@", tempObject);
+        if ([sID  isEqual: @"1000000000"]) {
+            data_error = 1;
+            self.studentIDField.text = guess;
+        }
+        
+    } else {
+        double sum = 0.0;
+        
+        for (id tempObject in listItems) {
+            if ([tempObject length] == 2) {
+                sum += [tempObject doubleValue];
+            }
+            NSLog(@"%@", tempObject);
+        }
+        NSString *totalString = [NSString stringWithFormat:@"%.1lf", sum];
+        yes_mark = 1;
+        if (yes_sid) {
+            self.results.marks = totalString;
+        } else {
+            self.results = [[Result alloc] init];
+            self.results.marks = totalString;
+        }
+        self.marksField.text = totalString;
     }
     
-	textView.text = result;
-    NSString *totalString = [NSString stringWithFormat:@"%.1lf", sum];
-
-    self.results = [[Result alloc] init];
-    self.results.studentID = sID;
-    self.results.marks = totalString;
-    
-    if ([sID  isEqual: @"1000000000"]) {
-        data_error = 1;
-        
+    if (data_error) {
         self.studentIDLabel.hidden = NO;
         self.marksLabel.hidden = NO;
         self.errorImageView.hidden = NO;
@@ -222,11 +299,12 @@ int data_error;
         [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
     }
     
-    self.studentIDField.text = guess;
-    self.marksField.text = totalString;
-
+    NSLog(@"yes_sid_after: %d", yes_sid);
+    NSLog(@"yes_mark_after: %d", yes_mark);
     
-    if (!data_error) {
+    if (!data_error && yes_sid == 1 && yes_mark == 1) {
+        yes_sid = 0;
+        yes_mark = 0;
         self.rStudents = [defaults rm_customObjectForKey:@"result_data"];
         [self.rStudents addObject:self.results];
         [defaults rm_setCustomObject:self.rStudents forKey:@"result_data"];
@@ -235,6 +313,73 @@ int data_error;
     
     self.showXMLButton.hidden = NO;
 }
+
+//- (void)client:(Client *)sender didFinishDownloadData:(NSData *)downloadedData
+//{
+//	statusIndicator.hidden = YES;
+//	
+//	NSString* result = [[NSString alloc] initWithData:downloadedData encoding:NSUTF8StringEncoding];
+//    
+//    //Add some parsing here
+//    NSDictionary *xmlDoc = [NSDictionary dictionaryWithXMLString:result];
+//    
+//    NSString *value = [xmlDoc valueForKeyPath:@"field.value.__text"];
+//    NSLog(@"value: %@", value);
+//	
+//    NSArray *listItems = [value componentsSeparatedByString:@"-"];
+//    NSLog(@"listItems: %@", listItems);
+//    
+//    NSLog(@"%lu", (unsigned long)listItems.count);
+//    
+//    NSString *sID = @"1000000000";
+//    double sum = 0.0;
+//    
+//    NSString *guess = @"1000000000";
+//    
+//    for (id tempObject in listItems) {
+//        if ([tempObject length] == 2) {
+//            sum += [tempObject doubleValue];
+//        } else if ([tempObject length] == 10) {
+//            sID = tempObject;
+//        } else if ([tempObject length] > 2) {
+//            guess = tempObject;
+//        }
+//        NSLog(@"%@", tempObject);
+//    }
+//    
+//	textView.text = result;
+//    NSString *totalString = [NSString stringWithFormat:@"%.1lf", sum];
+//
+//    self.results = [[Result alloc] init];
+//    self.results.studentID = sID;
+//    self.results.marks = totalString;
+//    
+//    if ([sID  isEqual: @"1000000000"]) {
+//        data_error = 1;
+//        
+//        self.studentIDLabel.hidden = NO;
+//        self.marksLabel.hidden = NO;
+//        self.errorImageView.hidden = NO;
+//        self.studentIDField.hidden = NO;
+//        self.marksField.hidden = NO;
+//        self.saveButton.hidden = NO;
+//        self.errorMessageLabel.hidden = NO;
+//        [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
+//    }
+//    
+//    self.studentIDField.text = guess;
+//    self.marksField.text = totalString;
+//
+//    
+//    if (!data_error) {
+//        self.rStudents = [defaults rm_customObjectForKey:@"result_data"];
+//        [self.rStudents addObject:self.results];
+//        [defaults rm_setCustomObject:self.rStudents forKey:@"result_data"];
+//        [defaults synchronize];
+//    }
+//    
+//    self.showXMLButton.hidden = NO;
+//}
 
 - (IBAction)showXmlClicked:(id)sender {
     textView.hidden = NO;

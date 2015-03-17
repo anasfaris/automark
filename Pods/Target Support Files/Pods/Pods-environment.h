@@ -42,6 +42,12 @@
 #define COCOAPODS_VERSION_MINOR_SACameraPickerViewController 1
 #define COCOAPODS_VERSION_PATCH_SACameraPickerViewController 0
 
+// UIImage-ResizeNCrop
+#define COCOAPODS_POD_AVAILABLE_UIImage_ResizeNCrop
+#define COCOAPODS_VERSION_MAJOR_UIImage_ResizeNCrop 0
+#define COCOAPODS_VERSION_MINOR_UIImage_ResizeNCrop 0
+#define COCOAPODS_VERSION_PATCH_UIImage_ResizeNCrop 5
+
 // XMLDictionary
 #define COCOAPODS_POD_AVAILABLE_XMLDictionary
 #define COCOAPODS_VERSION_MAJOR_XMLDictionary 1

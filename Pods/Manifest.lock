@@ -7,6 +7,7 @@ PODS:
     - XMLDictionary (= 1.2.2)
   - RMMapper (1.1.5)
   - SACameraPickerViewController (0.1.0)
+  - UIImage-ResizeNCrop (0.0.5)
   - XMLDictionary (1.2.2)
 
 DEPENDENCIES:
@@ -16,6 +17,7 @@ DEPENDENCIES:
   - OCRSDKClient (~> 0.2)
   - RMMapper (~> 1.1)
   - SACameraPickerViewController (~> 0.1)
+  - UIImage-ResizeNCrop (~> 0.0)
   - XMLDictionary (~> 1.2)
 
 SPEC CHECKSUMS:
@@ -25,6 +27,7 @@ SPEC CHECKSUMS:
   OCRSDKClient: a6259fd61d0155c9a7281837445103b0e0812673
   RMMapper: a32a1cc09d9652a83965906197097d2256d229f6
   SACameraPickerViewController: 373bac45da9fabf81bb9fc03c9521011624d9e18
+  UIImage-ResizeNCrop: eab2888c725f861b9491280a5c16d3d9a2186739
   XMLDictionary: f91fc96e7a43ea7e2bd9e76e532574066dc4eb1f
 
 COCOAPODS: 0.35.0
