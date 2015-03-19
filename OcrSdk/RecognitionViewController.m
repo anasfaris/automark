@@ -27,6 +27,7 @@ NSUserDefaults* defaults;
 Client *client;
 UIImageView *imageView;
 int data_error;
+int range_error;
 int pause_lock;
 int yes_sid;
 int yes_mark;
@@ -56,7 +57,8 @@ int yes_both;
     
     self.studentIDLabel.hidden = YES;
     self.marksLabel.hidden = YES;
-    self.errorImageView.hidden = YES;
+    self.studentIDImageView.hidden = YES;
+    self.marksImageView.hidden = YES;
     self.studentIDField.hidden = YES;
     self.marksField.hidden = YES;
     self.saveButton.hidden = YES;
@@ -66,7 +68,9 @@ int yes_both;
     yes_mark = 0;
     yes_sid = 0;
     yes_both = 0;
+    range_error = 0;
 
+    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -156,20 +160,26 @@ int yes_both;
 - (void)cameraPickerViewController:(SACameraPickerViewController *)cameraPicker didTakeImageWithInfo:(NSDictionary *)info
 {
     // Fetch the UIImage from the info dictionary
-    UIImage *image = [info objectForKey:SACameraPickerViewControllerImageKey];
+    UIImage *originalImage = [info objectForKey:SACameraPickerViewControllerImageKey];
     
-    // FOR TWO LINES
-    UIImage *image1 = [image cropInRect:CGRectMake(0, 255, 1064, 150)]; // student number image
-    UIImage *image2 = [image cropInRect:CGRectMake(0, 780, 1064, 150)]; // marks image
+    // Crop the images
+    UIImage *croppedImage1 = [originalImage cropInRect:CGRectMake(0, 255, 1064, 150)]; // student number image
+    UIImage *croppedImage2 = [originalImage cropInRect:CGRectMake(0, 780, 1064, 150)]; // marks image
     
-    image = [self mergeImage:image1 withImage:image2];
-    UIImage *contrastedImage1 = [image1 contrastAdjustmentWithValue:200.0];
-    UIImage *contrastedImage2 = [image2 contrastAdjustmentWithValue:200.0];
-    image = [self mergeImage:contrastedImage1 withImage:contrastedImage2];
-//    NSData *data = UIImageJPEGRepresentation(contrastedImage, 1.0);
-//    NSLog(@"size = %lu", (unsigned long) data.length);
+    // Apply contrast to images
+    UIImage *contrastedImage1 = [croppedImage1 contrastAdjustmentWithValue:200.0];
+    UIImage *contrastedImage2 = [croppedImage2 contrastAdjustmentWithValue:200.0];
     
-    self.errorImageView.image = image;
+    // Get image size
+    NSData *data1 = UIImageJPEGRepresentation(originalImage, 1.0);
+    NSData *data2 = UIImageJPEGRepresentation(croppedImage1, 1.0);
+    NSData *data3 = UIImageJPEGRepresentation(contrastedImage1, 1.0);
+    NSLog(@"Size of original image in bytes = %lu", (unsigned long) data1.length);
+    NSLog(@"Size of cropped image in bytes = %lu", (unsigned long) data2.length);
+    NSLog(@"Size of cropped and contrasted image in bytes = %lu", (unsigned long) data3.length);
+    
+    self.studentIDImageView.image = contrastedImage1;
+    self.marksImageView.image = contrastedImage2;
     [client processImage:contrastedImage1];
 //    [NSThread sleepForTimeInterval:0.06];
     [client processImage:contrastedImage2];
@@ -251,6 +261,8 @@ int yes_both;
     NSLog(@"yes_sid_before: %d", yes_sid);
     NSLog(@"yes_mark_before: %d", yes_mark);
     
+    double sum = 0.0;
+    
     if (listItems.count <= 2) {
         NSString *sID = @"1000000000";
         NSString *guess = @"1000000000";
@@ -259,11 +271,14 @@ int yes_both;
         else
             guess = listItems[0];
         yes_sid = 1;
-        if (yes_mark)
+        if (yes_mark) {
             self.results.studentID = sID;
+            self.studentIDField.text = sID;
+        }
         else {
             self.results = [[Result alloc] init];
             self.results.studentID = sID;
+            self.studentIDField.text = sID;
         }
         if ([sID  isEqual: @"1000000000"]) {
             data_error = 1;
@@ -271,7 +286,6 @@ int yes_both;
         }
         
     } else if (listItems.count <= 4) {
-        double sum = 0.0;
         
         for (id tempObject in listItems) {
             if ([tempObject length] == 2) {
@@ -287,22 +301,53 @@ int yes_both;
             self.results = [[Result alloc] init];
             self.results.marks = totalString;
         }
+        if (sum > 100) data_error = 2;
         self.marksField.text = totalString;
     } else {
         data_error = 1;
     }
     
-    if (data_error) {
+    if (data_error == 2) {
         self.studentIDLabel.hidden = NO;
         self.marksLabel.hidden = NO;
-        self.errorImageView.hidden = NO;
+        self.errorMessageLabel.text = @"There is a problem in the result. The marks detected are more than the total marks. Please revalidate and save!";
+        self.studentIDImageView.hidden = NO;
+        self.marksImageView.hidden = NO;
         self.studentIDField.hidden = NO;
         self.marksField.hidden = NO;
         self.saveButton.hidden = NO;
         self.errorMessageLabel.hidden = NO;
         [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
+    } else if (data_error) {
+        self.studentIDLabel.hidden = NO;
+        self.marksLabel.hidden = NO;
+        self.studentIDImageView.hidden = NO;
+        self.marksImageView.hidden = NO;
+        self.studentIDField.hidden = NO;
+        self.marksField.hidden = NO;
+        self.saveButton.hidden = NO;
+        self.errorMessageLabel.hidden = NO;
+        self.errorMessageLabel.text = @"We are unsure about this result. Please resubmit and press save!";
+        [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
     }
     
+//    if (sum > 100) {
+//        range_error = 1;
+//    }
+//    if (range_error == 1) {
+//        self.studentIDLabel.hidden = NO;
+//        self.marksLabel.hidden = NO;
+//        self.marksLabel.text = @"There is a problem in the result. The marks detected are more than the total marks. Please revalidate and save ";
+//        self.studentIDImageView.hidden = NO;
+//        self.marksImageView.hidden = NO;
+//        self.studentIDField.hidden = NO;
+//        self.marksField.hidden = NO;
+//        self.saveButton.hidden = NO;
+//        self.errorMessageLabel.hidden = NO;
+//        [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
+//    }
+    
+    NSLog(@"data_error: %d", data_error);
     NSLog(@"yes_sid_after: %d", yes_sid);
     NSLog(@"yes_mark_after: %d", yes_mark);
     

@@ -14,7 +14,10 @@
 @property (strong, nonatomic) IBOutlet UILabel *marksLabel;
 @property (strong, nonatomic) IBOutlet UITextField *studentIDField;
 @property (strong, nonatomic) IBOutlet UITextField *marksField;
-@property (strong, nonatomic) IBOutlet UIImageView *errorImageView;
+
+@property (strong, nonatomic) IBOutlet UIImageView *studentIDImageView;
+@property (strong, nonatomic) IBOutlet UIImageView *marksImageView;
+
 
 @property Result *results;
 @property Result *tests;
