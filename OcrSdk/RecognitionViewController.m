@@ -31,7 +31,10 @@ int range_error;
 int pause_lock;
 int yes_sid;
 int yes_mark;
+int yes_mark2;
 int yes_both;
+int process_number;
+double sum;
 
 - (void)didReceiveMemoryWarning
 {
@@ -59,6 +62,7 @@ int yes_both;
     self.marksLabel.hidden = YES;
     self.studentIDImageView.hidden = YES;
     self.marksImageView.hidden = YES;
+    self.marksImageView2.hidden = YES;
     self.studentIDField.hidden = YES;
     self.marksField.hidden = YES;
     self.saveButton.hidden = YES;
@@ -69,8 +73,11 @@ int yes_both;
     yes_sid = 0;
     yes_both = 0;
     range_error = 0;
+    process_number = 0;
+    sum = 0.0;
+    
 
-    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
+    [self performSelector:@selector(takePhoto:) withObject:self afterDelay:1.0];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -141,7 +148,11 @@ int yes_both;
 //    self.cameraPicker.previewSize = CGSizeMake(320, 30);
     
     // TWO LINES
-    self.cameraPicker.previewSize = CGSizeMake(280, 250);
+//    self.cameraPicker.previewSize = CGSizeMake(280, 250);
+    
+    // 10 FIELDS
+//    self.cameraPicker.previewSize = CGSizeMake(280, 270);
+    self.cameraPicker.previewSize = CGSizeMake(310, 320);
     
     // Present the SACameraPickerViewController's View.
     [self presentViewController:self.cameraPicker animated:YES completion:nil];
@@ -163,26 +174,43 @@ int yes_both;
     UIImage *originalImage = [info objectForKey:SACameraPickerViewControllerImageKey];
     
     // Crop the images
-    UIImage *croppedImage1 = [originalImage cropInRect:CGRectMake(0, 255, 1064, 150)]; // student number image
-    UIImage *croppedImage2 = [originalImage cropInRect:CGRectMake(0, 780, 1064, 150)]; // marks image
+//    UIImage *croppedImage1 = [originalImage cropInRect:CGRectMake(0, 255, 1064, 150)]; // student number image
+//    UIImage *croppedImage2 = [originalImage cropInRect:CGRectMake(0, 780, 1064, 150)]; // marks image
+    
+    // Crop the images for 10 fields                             (x, y, width, height)
+    UIImage *croppedImage1 = [originalImage cropInRect:CGRectMake(0, 190, 1064, 150)]; // student number image
+    UIImage *croppedImage2 = [originalImage cropInRect:CGRectMake(0, 620, 1064, 150)]; // marks image
+    UIImage *croppedImage3 = [originalImage cropInRect:CGRectMake(0, 950, 1064, 150)]; // marks image 2
     
     // Apply contrast to images
     UIImage *contrastedImage1 = [croppedImage1 contrastAdjustmentWithValue:200.0];
     UIImage *contrastedImage2 = [croppedImage2 contrastAdjustmentWithValue:200.0];
+    UIImage *contrastedImage3 = [croppedImage3 contrastAdjustmentWithValue:200.0];
     
     // Get image size
-    NSData *data1 = UIImageJPEGRepresentation(originalImage, 1.0);
-    NSData *data2 = UIImageJPEGRepresentation(croppedImage1, 1.0);
-    NSData *data3 = UIImageJPEGRepresentation(contrastedImage1, 1.0);
-    NSLog(@"Size of original image in bytes = %lu", (unsigned long) data1.length);
-    NSLog(@"Size of cropped image in bytes = %lu", (unsigned long) data2.length);
-    NSLog(@"Size of cropped and contrasted image in bytes = %lu", (unsigned long) data3.length);
+//    NSData *data1 = UIImageJPEGRepresentation(originalImage, 1.0);
+//    NSData *data2 = UIImageJPEGRepresentation(croppedImage1, 1.0);
+//    NSData *data3 = UIImageJPEGRepresentation(contrastedImage1, 1.0);
+//    NSLog(@"Size of original image in bytes = %lu", (unsigned long) data1.length);
+//    NSLog(@"Size of cropped image in bytes = %lu", (unsigned long) data2.length);
+//    NSLog(@"Size of cropped and contrasted image in bytes = %lu", (unsigned long) data3.length);
     
     self.studentIDImageView.image = contrastedImage1;
     self.marksImageView.image = contrastedImage2;
+    self.marksImageView2.image = contrastedImage3;
+    self.studentIDImageView.hidden = NO;
+    self.marksImageView.hidden = NO;
+    self.marksImageView2.hidden = NO;
+
+//        process_number = 1;
+//        [client processImage:contrastedImage1];
+
     [client processImage:contrastedImage1];
-//    [NSThread sleepForTimeInterval:0.06];
     [client processImage:contrastedImage2];
+    [client processImage:contrastedImage3];
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [client processImage:contrastedImage3];
+//    });
     
 }
 
@@ -222,7 +250,7 @@ int yes_both;
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return (interfaceOrientation == UIInterfaceOrientationLandscapeLeft);
 //	return NO;
 }
 
@@ -252,17 +280,7 @@ int yes_both;
     
     
     NSArray *listItems = [value componentsSeparatedByString:@"-"];
-    NSLog(@"listItems: %@", listItems);
-    
-    
-    NSLog(@"%lu", (unsigned long)listItems.count);
-    
-    
-    NSLog(@"yes_sid_before: %d", yes_sid);
-    NSLog(@"yes_mark_before: %d", yes_mark);
-    
-    double sum = 0.0;
-    
+
     if (listItems.count <= 2) {
         NSString *sID = @"1000000000";
         NSString *guess = @"1000000000";
@@ -285,24 +303,21 @@ int yes_both;
             self.studentIDField.text = guess;
         }
         
-    } else if (listItems.count <= 4) {
+    } else if (listItems.count <= 6) {
         
         for (id tempObject in listItems) {
             if ([tempObject length] == 2) {
                 sum += [tempObject doubleValue];
             }
-            NSLog(@"%@", tempObject);
         }
-        NSString *totalString = [NSString stringWithFormat:@"%.1lf", sum];
-        yes_mark = 1;
-        if (yes_sid) {
-            self.results.marks = totalString;
-        } else {
+        if (yes_mark == 1)
+            yes_mark2 = 1;
+        else
+            yes_mark = 1;
+        if (yes_sid != 1)
             self.results = [[Result alloc] init];
-            self.results.marks = totalString;
-        }
+
         if (sum > 100) data_error = 2;
-        self.marksField.text = totalString;
     } else {
         data_error = 1;
     }
@@ -313,6 +328,7 @@ int yes_both;
         self.errorMessageLabel.text = @"There is a problem in the result. The marks detected are more than the total marks. Please revalidate and save!";
         self.studentIDImageView.hidden = NO;
         self.marksImageView.hidden = NO;
+        self.marksImageView2.hidden = NO;
         self.studentIDField.hidden = NO;
         self.marksField.hidden = NO;
         self.saveButton.hidden = NO;
@@ -323,6 +339,7 @@ int yes_both;
         self.marksLabel.hidden = NO;
         self.studentIDImageView.hidden = NO;
         self.marksImageView.hidden = NO;
+        self.marksImageView2.hidden = NO;
         self.studentIDField.hidden = NO;
         self.marksField.hidden = NO;
         self.saveButton.hidden = NO;
@@ -331,30 +348,18 @@ int yes_both;
         [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
     }
     
-//    if (sum > 100) {
-//        range_error = 1;
-//    }
-//    if (range_error == 1) {
-//        self.studentIDLabel.hidden = NO;
-//        self.marksLabel.hidden = NO;
-//        self.marksLabel.text = @"There is a problem in the result. The marks detected are more than the total marks. Please revalidate and save ";
-//        self.studentIDImageView.hidden = NO;
-//        self.marksImageView.hidden = NO;
-//        self.studentIDField.hidden = NO;
-//        self.marksField.hidden = NO;
-//        self.saveButton.hidden = NO;
-//        self.errorMessageLabel.hidden = NO;
-//        [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
-//    }
+    NSLog(@"data_error: %d, studentID: %d, mark1: %d, mark2: %d", data_error, yes_sid, yes_mark, yes_mark2);
     
-    NSLog(@"data_error: %d", data_error);
-    NSLog(@"yes_sid_after: %d", yes_sid);
-    NSLog(@"yes_mark_after: %d", yes_mark);
-    
-    if (!data_error && yes_sid == 1 && yes_mark == 1) {
+    if (!data_error && yes_sid == 1 && yes_mark == 1 && yes_mark2 == 1) {
+        NSString *totalString = [NSString stringWithFormat:@"%.1lf", sum];
+        self.results.marks = totalString;
+        
         yes_sid = 0;
         yes_mark = 0;
+        yes_mark2 = 0;
+        sum = 0;
         self.rStudents = [defaults rm_customObjectForKey:@"result_data"];
+        NSLog(@"%@", self.results.marks);
         [self.rStudents addObject:self.results];
         [defaults rm_setCustomObject:self.rStudents forKey:@"result_data"];
         [defaults synchronize];
@@ -362,73 +367,6 @@ int yes_both;
     
     self.showXMLButton.hidden = NO;
 }
-
-//- (void)client:(Client *)sender didFinishDownloadData:(NSData *)downloadedData
-//{
-//	statusIndicator.hidden = YES;
-//	
-//	NSString* result = [[NSString alloc] initWithData:downloadedData encoding:NSUTF8StringEncoding];
-//    
-//    //Add some parsing here
-//    NSDictionary *xmlDoc = [NSDictionary dictionaryWithXMLString:result];
-//    
-//    NSString *value = [xmlDoc valueForKeyPath:@"field.value.__text"];
-//    NSLog(@"value: %@", value);
-//	
-//    NSArray *listItems = [value componentsSeparatedByString:@"-"];
-//    NSLog(@"listItems: %@", listItems);
-//    
-//    NSLog(@"%lu", (unsigned long)listItems.count);
-//    
-//    NSString *sID = @"1000000000";
-//    double sum = 0.0;
-//    
-//    NSString *guess = @"1000000000";
-//    
-//    for (id tempObject in listItems) {
-//        if ([tempObject length] == 2) {
-//            sum += [tempObject doubleValue];
-//        } else if ([tempObject length] == 10) {
-//            sID = tempObject;
-//        } else if ([tempObject length] > 2) {
-//            guess = tempObject;
-//        }
-//        NSLog(@"%@", tempObject);
-//    }
-//    
-//	textView.text = result;
-//    NSString *totalString = [NSString stringWithFormat:@"%.1lf", sum];
-//
-//    self.results = [[Result alloc] init];
-//    self.results.studentID = sID;
-//    self.results.marks = totalString;
-//    
-//    if ([sID  isEqual: @"1000000000"]) {
-//        data_error = 1;
-//        
-//        self.studentIDLabel.hidden = NO;
-//        self.marksLabel.hidden = NO;
-//        self.errorImageView.hidden = NO;
-//        self.studentIDField.hidden = NO;
-//        self.marksField.hidden = NO;
-//        self.saveButton.hidden = NO;
-//        self.errorMessageLabel.hidden = NO;
-//        [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
-//    }
-//    
-//    self.studentIDField.text = guess;
-//    self.marksField.text = totalString;
-//
-//    
-//    if (!data_error) {
-//        self.rStudents = [defaults rm_customObjectForKey:@"result_data"];
-//        [self.rStudents addObject:self.results];
-//        [defaults rm_setCustomObject:self.rStudents forKey:@"result_data"];
-//        [defaults synchronize];
-//    }
-//    
-//    self.showXMLButton.hidden = NO;
-//}
 
 - (IBAction)showXmlClicked:(id)sender {
     textView.hidden = NO;

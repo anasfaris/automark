@@ -17,6 +17,7 @@
 
 @property (strong, nonatomic) IBOutlet UIImageView *studentIDImageView;
 @property (strong, nonatomic) IBOutlet UIImageView *marksImageView;
+@property (strong, nonatomic) IBOutlet UIImageView *marksImageView2;
 
 
 @property Result *results;
