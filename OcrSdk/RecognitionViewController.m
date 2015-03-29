@@ -333,22 +333,22 @@ double sum;
     self.marksField.text = [NSString stringWithFormat:@"%.1lf", sum];
     
     NSArray *confidence = [xmlDoc valueForKeyPath:@"field.line.char._confidence"];
-    NSLog(@"confidence: %@", confidence);
+//    NSLog(@"confidence: %@", confidence);
     
     for (id tempObject in confidence) {
         NSString *str = [NSString stringWithFormat:@"%@", tempObject];
         if ([str isEqualToString:@"0"]) {
             data_error = 1;
-            NSLog(@"Error from confidence");
+//            NSLog(@"Error from confidence");
         }
     }
     
     NSMutableArray *suspicious = [xmlDoc valueForKeyPath:@"field.line.char._suspicious"];
-    NSLog(@"suspicious: %@", suspicious);
+//    NSLog(@"suspicious: %@", suspicious);
     
     for (id tempObject in suspicious) {
         NSString *str = [NSString stringWithFormat:@"%@", tempObject];
-        if ([str isEqualToString:@"true"])
+//        if ([str isEqualToString:@"true"])
             data_error = 1;
     }
     
