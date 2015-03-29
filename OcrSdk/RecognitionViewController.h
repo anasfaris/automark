@@ -19,6 +19,7 @@
 @property (strong, nonatomic) IBOutlet UIImageView *marksImageView;
 @property (strong, nonatomic) IBOutlet UIImageView *marksImageView2;
 
+@property (strong, nonatomic) IBOutlet UITextView *detectTextView;
 
 @property Result *results;
 @property Result *tests;
@@ -26,6 +27,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *showXMLButton;
 
 @property (strong, nonatomic) NSMutableArray *rStudents;
+@property (strong, nonatomic) NSMutableArray *detectedValues;
 
 @property (nonatomic, strong) SACameraPickerViewController *cameraPicker;
 

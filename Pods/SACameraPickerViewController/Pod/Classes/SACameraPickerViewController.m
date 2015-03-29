@@ -154,7 +154,7 @@
     [self.view.layer insertSublayer:self.previewLayer atIndex:0];
     
     self.cancelButton = [[UIButton alloc] initWithFrame:CGRectZero];
-    [self.cancelButton setTitle:@"Cancel" forState:UIControlStateNormal];
+    [self.cancelButton setTitle:@"Done" forState:UIControlStateNormal];
     [self.cancelButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.cancelButton addTarget:self action:@selector(cancel) forControlEvents:UIControlEventTouchUpInside];
     self.cancelButtonEnabled = self.cancelButtonEnabled;

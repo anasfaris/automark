@@ -5,6 +5,7 @@ PODS:
   - OCRSDKClient (0.2.1):
     - AFNetworking (= 1.3.1)
     - XMLDictionary (= 1.2.2)
+  - RKDropdownAlert (0.1.1)
   - RMMapper (1.1.5)
   - SACameraPickerViewController (0.1.0)
   - UIImage-ResizeNCrop (0.0.5)
@@ -15,6 +16,7 @@ DEPENDENCIES:
   - CHCSVParser (~> 2.1)
   - NYXImagesKit (~> 2.3)
   - OCRSDKClient (~> 0.2)
+  - RKDropdownAlert
   - RMMapper (~> 1.1)
   - SACameraPickerViewController (~> 0.1)
   - UIImage-ResizeNCrop (~> 0.0)
@@ -25,6 +27,7 @@ SPEC CHECKSUMS:
   CHCSVParser: 1ebc9783114707e2b6f83b20fe0f246eb2fabae0
   NYXImagesKit: 1c9f228ae78fab475d267b3b3a1308e0fba11731
   OCRSDKClient: a6259fd61d0155c9a7281837445103b0e0812673
+  RKDropdownAlert: f9ef694f0b54e075b5e0bd61827bd69c8d29c051
   RMMapper: a32a1cc09d9652a83965906197097d2256d229f6
   SACameraPickerViewController: 373bac45da9fabf81bb9fc03c9521011624d9e18
   UIImage-ResizeNCrop: eab2888c725f861b9491280a5c16d3d9a2186739

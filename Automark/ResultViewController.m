@@ -10,6 +10,7 @@
 #import "ICRViewController.h"
 #import "NSUserDefaults+RMSaveCustomObject.h"
 #import "CHCSVParser.h"
+#import "RKDropdownAlert.h"
 
 @interface ResultViewController ()
 
@@ -138,7 +139,7 @@ NSUserDefaults* defaults;
         // Fill out the email body text
         NSString *emailBody = @"Result";
         [mailComposer setMessageBody:emailBody isHTML:NO];
-        [mailComposer setSubject:@"Result Example"];
+        [mailComposer setSubject:@"Result Submission"];
         [mailComposer setToRecipients:@[@"sifooparadox@gmail.com",@"anas.ahmadfaris@mail.utoronto.ca"]];
         
         //attaching the data and naming it to
@@ -152,7 +153,7 @@ NSUserDefaults* defaults;
     // Dismiss the compose controller
     [self dismissViewControllerAnimated:YES completion:nil];
 
-    
+    [RKDropdownAlert title:@"Marks submitted!" backgroundColor:[UIColor colorWithRed:24.0/255 green:125.0/255 blue:198.0/255 alpha:1.0] textColor:[UIColor whiteColor] time:2];
 }
 
 - (IBAction)clearClicked:(id)sender {
@@ -160,6 +161,8 @@ NSUserDefaults* defaults;
     [defaults rm_setCustomObject:self.students forKey:@"result_data"];
     [defaults synchronize];
     [self.tableView reloadData];
+    
+    [RKDropdownAlert title:@"List cleared" backgroundColor:[UIColor colorWithRed:24.0/255 green:125.0/255 blue:198.0/255 alpha:1.0] textColor:[UIColor whiteColor] time:2];
     
 }
 

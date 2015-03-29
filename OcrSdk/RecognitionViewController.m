@@ -7,6 +7,7 @@
 #import "UIImage+Filtering.h"
 #import "UIImage+Resizing.h"
 #import "UIImage+ResizeNCrop.h"
+#import "RKDropdownAlert.h"
 
 // To create an application and obtain a password,
 // register at http://cloud.ocrsdk.com/Account/Register
@@ -68,6 +69,7 @@ double sum;
     self.marksField.hidden = YES;
     self.saveButton.hidden = YES;
     self.errorMessageLabel.hidden = YES;
+    self.detectTextView.hidden = YES;
     
     pause_lock = 1;
     yes_mark = 0;
@@ -78,7 +80,9 @@ double sum;
     sum = 0.0;
     stop = 0;
     
-
+    self.detectedValues = [[NSMutableArray alloc] init];
+    
+    
     [self performSelector:@selector(takePhoto:) withObject:self afterDelay:1.0];
 	// Do any additional setup after loading the view, typically from a nib.
 }
@@ -282,7 +286,6 @@ double sum;
     NSString *value = [xmlDoc valueForKeyPath:@"field.value.__text"];
     NSLog(@"value: %@", value);
     
-    
     NSArray *listItems = [value componentsSeparatedByString:@"-"];
 
     if (listItems.count <= 2) {
@@ -324,7 +327,29 @@ double sum;
         if (sum > 100) data_error = 2;
     } else {
         data_error = 1;
-        self.marksField.text = [NSString stringWithFormat:@"%.1lf", sum];
+    }
+    
+    
+    self.marksField.text = [NSString stringWithFormat:@"%.1lf", sum];
+    
+    NSArray *confidence = [xmlDoc valueForKeyPath:@"field.line.char._confidence"];
+    NSLog(@"confidence: %@", confidence);
+    
+    for (id tempObject in confidence) {
+        NSString *str = [NSString stringWithFormat:@"%@", tempObject];
+        if ([str isEqualToString:@"0"]) {
+            data_error = 1;
+            NSLog(@"Error from confidence");
+        }
+    }
+    
+    NSMutableArray *suspicious = [xmlDoc valueForKeyPath:@"field.line.char._suspicious"];
+    NSLog(@"suspicious: %@", suspicious);
+    
+    for (id tempObject in suspicious) {
+        NSString *str = [NSString stringWithFormat:@"%@", tempObject];
+        if ([str isEqualToString:@"true"])
+            data_error = 1;
     }
     
     if (data_error == 2) {
@@ -348,25 +373,32 @@ double sum;
         [defaults synchronize];
     }
     
+    [self.detectedValues addObject:value];
+    
     self.showXMLButton.hidden = NO;
 }
 
 -(void)showButton:(NSString *)message {
     self.studentIDLabel.hidden = NO;
     self.marksLabel.hidden = NO;
-    self.errorMessageLabel.text = message;
+//    self.errorMessageLabel.text = message;
     self.studentIDImageView.hidden = NO;
     self.marksImageView.hidden = NO;
     self.marksImageView2.hidden = NO;
     self.studentIDField.hidden = NO;
     self.marksField.hidden = NO;
     self.saveButton.hidden = NO;
-    self.errorMessageLabel.hidden = NO;
+//    self.errorMessageLabel.hidden = NO;
+    self.navigationController.title = @"Alert!";
     [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
+    
+    [RKDropdownAlert title:@"Alert!" message:message backgroundColor:[UIColor redColor] textColor:[UIColor whiteColor] time:3];
 }
 
 - (IBAction)showXmlClicked:(id)sender {
-    textView.hidden = NO;
+//    textView.hidden = NO;
+    self.detectTextView.text = [NSString stringWithFormat:@"%@", self.detectedValues];
+    self.detectTextView.hidden = NO;
 }
 
 - (IBAction)saveButtonClicked:(id)sender {
