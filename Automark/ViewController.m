@@ -65,14 +65,6 @@
     ResultViewController *resultViewController = segue.destinationViewController;
     resultViewController.getID = self.examTextField.text;
     
-//    NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-//    DetailHomeViewController *detailHomeVC = segue.destinationViewController;
-//    detailHomeVC.program = [self.homeItem objectAtIndex:indexPath.row];
-    
-    // Set the front view controller to be the destination one
-//    [self.revealViewController setFrontViewController:segue.destinationViewController];
-
-    
 }
 
 @end

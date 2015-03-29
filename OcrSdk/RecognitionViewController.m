@@ -34,6 +34,7 @@ int yes_mark;
 int yes_mark2;
 int yes_both;
 int process_number;
+int stop;
 double sum;
 
 - (void)didReceiveMemoryWarning
@@ -75,6 +76,7 @@ double sum;
     range_error = 0;
     process_number = 0;
     sum = 0.0;
+    stop = 0;
     
 
     [self performSelector:@selector(takePhoto:) withObject:self afterDelay:1.0];
@@ -124,7 +126,7 @@ double sum;
 	
 	client.applicationID = [client.applicationID stringByAppendingString:installationID];
     
-    if (!data_error)
+    if (!data_error && !stop)
         [self performSelector:@selector(takePhoto:) withObject:self afterDelay:0.0];
     data_error = 0;
     
@@ -162,9 +164,11 @@ double sum;
 // Optional - Called when the SACameraPickerViewController is Cancelled.
 - (void)cameraPickerViewControllerDidCancel:(SACameraPickerViewController *)cameraPicker
 {
-    [NSThread sleepForTimeInterval:1.00];
-    UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
-    [self.navigationController popToViewController:prevVC animated:YES];
+    stop = 1;
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        UIViewController *prevVC = [self.navigationController.viewControllers objectAtIndex:1];
+        [self.navigationController popToViewController:prevVC animated:YES];
+    });
 }
 
 // Required - The return info from the SACameraPickerViewController.
@@ -320,35 +324,14 @@ double sum;
         if (sum > 100) data_error = 2;
     } else {
         data_error = 1;
+        self.marksField.text = [NSString stringWithFormat:@"%.1lf", sum];
     }
     
     if (data_error == 2) {
-        self.studentIDLabel.hidden = NO;
-        self.marksLabel.hidden = NO;
-        self.errorMessageLabel.text = @"There is a problem in the result. The marks detected are more than the total marks. Please revalidate and save!";
-        self.studentIDImageView.hidden = NO;
-        self.marksImageView.hidden = NO;
-        self.marksImageView2.hidden = NO;
-        self.studentIDField.hidden = NO;
-        self.marksField.hidden = NO;
-        self.saveButton.hidden = NO;
-        self.errorMessageLabel.hidden = NO;
-        [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
+        [self showButton:@"There is a problem in the result. The marks detected are more than the total marks. Please revalidate and save!"];
     } else if (data_error) {
-        self.studentIDLabel.hidden = NO;
-        self.marksLabel.hidden = NO;
-        self.studentIDImageView.hidden = NO;
-        self.marksImageView.hidden = NO;
-        self.marksImageView2.hidden = NO;
-        self.studentIDField.hidden = NO;
-        self.marksField.hidden = NO;
-        self.saveButton.hidden = NO;
-        self.errorMessageLabel.hidden = NO;
-        self.errorMessageLabel.text = @"We are unsure about this result. Please resubmit and press save!";
-        [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
+        [self showButton:@"We are unsure about this result. Please resubmit and press save!"];
     }
-    
-    NSLog(@"data_error: %d, studentID: %d, mark1: %d, mark2: %d", data_error, yes_sid, yes_mark, yes_mark2);
     
     if (!data_error && yes_sid == 1 && yes_mark == 1 && yes_mark2 == 1) {
         NSString *totalString = [NSString stringWithFormat:@"%.1lf", sum];
@@ -366,6 +349,20 @@ double sum;
     }
     
     self.showXMLButton.hidden = NO;
+}
+
+-(void)showButton:(NSString *)message {
+    self.studentIDLabel.hidden = NO;
+    self.marksLabel.hidden = NO;
+    self.errorMessageLabel.text = message;
+    self.studentIDImageView.hidden = NO;
+    self.marksImageView.hidden = NO;
+    self.marksImageView2.hidden = NO;
+    self.studentIDField.hidden = NO;
+    self.marksField.hidden = NO;
+    self.saveButton.hidden = NO;
+    self.errorMessageLabel.hidden = NO;
+    [self.cameraPicker dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)showXmlClicked:(id)sender {
