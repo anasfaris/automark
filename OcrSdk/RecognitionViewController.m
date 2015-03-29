@@ -399,6 +399,7 @@ double sum;
 //    textView.hidden = NO;
     self.detectTextView.text = [NSString stringWithFormat:@"%@", self.detectedValues];
     self.detectTextView.hidden = NO;
+    self.detectedValues = [[NSMutableArray alloc] init];
 }
 
 - (IBAction)saveButtonClicked:(id)sender {
