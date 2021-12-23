@@ -1,5 +1,0 @@
-#include "Pods-NYXImagesKit.xcconfig"
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Build" "${PODS_ROOT}/Headers/Build/NYXImagesKit" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/AFNetworking" "${PODS_ROOT}/Headers/Public/CHCSVParser" "${PODS_ROOT}/Headers/Public/NYXImagesKit" "${PODS_ROOT}/Headers/Public/OCRSDKClient" "${PODS_ROOT}/Headers/Public/RKDropdownAlert" "${PODS_ROOT}/Headers/Public/RMMapper" "${PODS_ROOT}/Headers/Public/SACameraPickerViewController" "${PODS_ROOT}/Headers/Public/UIImage-ResizeNCrop" "${PODS_ROOT}/Headers/Public/XMLDictionary"
-OTHER_LDFLAGS = ${PODS_NYXIMAGESKIT_OTHER_LDFLAGS} -ObjC
-PODS_ROOT = ${SRCROOT}
